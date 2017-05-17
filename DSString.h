@@ -87,16 +87,13 @@ class DSString{
 
         //LEE
 
-          void toLower();
-          friend std::istream& operator>> (std::istream& inStream, const DSString& outString);
-          bool isPunct(char inChar);
-          void vmSplit(DSVector<DSString> &splitVector);
-          bool isQuote(char inChar);
-          bool isArticle(DSString inStr);
-          bool functionCutter(char inChar);
+        void toLower();
+        friend std::istream& operator>> (std::istream& inStream, const DSString& outString);
+        bool isPunct(char inChar);
+        void vmSplit(DSVector<DSString> &splitVector);
+        bool isQuote(char inChar);
+        bool isArticle(DSString inStr);
+        bool functionCutter(char inChar);
 
 };
-
-
-
 #endif

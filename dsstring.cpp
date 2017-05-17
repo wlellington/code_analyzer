@@ -446,9 +446,6 @@ bool DSString::isQuote(char inChar)
 
 void DSString::vmSplit(DSVector<DSString> & splitVector){
 
-//    if(splitVector.)
-
-
     if (VERBOSE) std::cout << "DSString split called" << std::endl;
 
     DSString tmp;

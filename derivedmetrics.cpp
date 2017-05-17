@@ -1295,6 +1295,7 @@ void codeFormat::createScore(directoryIterator files)
                 verboseLines.append(tmpRecord);
 
     }//end of iterate file forloop
+    
     //Use hashtable to plot piecewise fucntion of Key Values.
     //Make sure that scores are adjusted according to piecewise function that will be linient on
     //lower frequency mistakes and harsher on repeated mistakes.
