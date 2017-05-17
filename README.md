@@ -1,95 +1,57 @@
-# CodeAnalyzer
+# Static Code Analyzer
 Fall 2016 Data Structures Final Project
 
 ## Contributors 
-Wesley Ellington 	45487212
-Seung Ki Lee      35460312
+Wesley Ellington
+
+Seung Ki Lee
 
 ## Overview
+The main goal of this project is to help developers have a better idea what the quality of their C or C++ code is after it is completed. It generates a score based on a number of metrics we believe indicates good code quality, the details of which can be found later in this document. It can be run on entire directory and will recursivly crawl through its subdirectories and give metrics on all C and C++ files it encounters. The score will be reported to the user in a composite number where a zero is perfect and higher numbers are less good. The user can also change the verbosity of the output to see exactly how each metric is being built and see the specific instances of each item that is looked at.
 
+This analyzer will not do any tasks regarding compilation and assumes that code is syntactically correct. It should also be noted that exsessivly large codebases may cause issues at runtime. 
 
-## Design Concerns
-The first issue we must deal with is parsing out the codebase in question. To do this, we will use two methods: line by line parsing and tokenization, and some sort of Abstract Syntax Tree generation. The first allows us to look into the commenting scheme of the program, as well as analyze style consistency in indentation and punctuation placement. The second, and perhaps more insightful, will grant us access to the structure of the code itself, making it easier to evaluate logic control and repeated code blocks. To do this, we will create multiple parse structures that will make certain aspects of the code more evident based on their format, giving us the power to use them individually or in concert to ascertain the impact of certain coding details.
+## Usage
+This application was built to run in the QT environment on an Ubuntu system. It uses the qmake toolchain and is reliant on
+that environment to run. The .pro files define the configurations needed to properly compile and run this tool. 
 
-One of our main concerns in this task will be expandability. With this in mind, we have decided to use the polymorphic capacities of C++ to our advantage. We will create an abstract base class that will serve as a placeholder and draw from it to create multiple subclasses, one for each metric we choose. The base class shall contain two attributes, a double that will represent the score of the code on that given metric, an int that represents a weighting value for use in creating a compound score, and a vector of well formatted strings to give verbose output should it be requested. Each metric will have its own member functions for creating its results and will have access to the parsed data created by the parsers.
-
-By keeping this functionality in mind, this code system will be easily expandable and adding new tests require a one to two line edit to the code.
+Once compiled, all that is required is for the user to supply a verbosity flag  or not (-v), the name of the directory they
+wish to run analysis on, and the name of a file they wish to have their results save to. Along the way, a great deal of file I/O will take place, so it is to be expected that it may take some time to finish.
 
 ## Metrics
-There are many types of analysis we can run, but for the sake of this project, there are two main areas of concern. The first pertains to the readability of the code in question and the style used to create it. This is important to us as it lends the codebase to better maintainability and makes it accessible to other users. Here, we look at the non-compilation-impactful aspects such as whitespace, indentation, bracket and end bracket consistency, and other like topics.
 
+Each metric score is calculated individialy, weighted based on importance, and averaged to create the composite score.
 
-Second, we turn to the more impactful, but more complicated aspects of the code. It is our goal to analyze the high level function of the code as well, but must create much more complex metrics to do so. For example, we would like to detect repeated (or similar ) blocks of code to point out that a helper function would be of better benefit to the situation. Our hope at this point is to create a compiler-like AST (Abstract Syntax Tree) and use some fuzzy logic to match and search patterns we find in the tree.
+### Comments to Lines of Code Ratio
+This is a pretty standard metric that gives the user an idea of how much commenting they have been doing. It compares the
+number of comments discovered in a file to the total number of lines in the file.
 
+### Comment Quality
+To better determine the quality of the comment, some simple language analytics are run based on the type of words found in the
+comments. It compares the ratio of verbs, nouns, adjectives, and other parts of speach to determine how good the language used
+is, and therefore how readable it is.
 
-At this moment we plan to implement the following:
+### Function and Variable naming
+Here, our goal is to enforce some level of meaning in the naming of functions and variables for the sake of readability. It discorages short, abreviation heavy naming schemes and rewards those that use full words that are easy to understand.
 
-### Whitespacing consistency and style
-Are all indentations standard and consistent
+### Function Size
+It is considered good practice to split large tasks up into sets of smaller functions. In this metric, we report a score based
+on the length of the functions discovered in the source code. 
 
-Does the user use the same chars for spacing (tabs vs spaces)
+### Delatation
+This is a metric of our own design that attempts to quantify the "fan out" of a programs function calls. It looks for function
+definitions and implementations and analyzes the number of calls made within each. Due to the complexity of C++ syntax, certain implicit calls, such as the [] operator, are ignored.
 
-Inline spacing between types and pointers
-### Bracket consistency and style
-Is the programmer using brackets on the same or next line after starting a block
+More information about all metrics can be found in the report file in this repository.
 
-Are there brackets in one line if statements
-### Comment line to LoC ratio
-Ratio of lines of code to lines of comment
+## License
+In our experiance, tools of this sort offer themselves as great learning tools to those new to a language or subject. With
+this in mind, we invite anyone who wishes to use our codes to better their own education to do so, but cite it whenever used.
 
-Point out inline comments and recommend making them above line
-### Repeated and Similar Block detection
-If similar functionality is discovered (copy pasted blocks)
+This project is reliant on some custom data structures that should be recycleable for other applications should anyone want to
+use them. They have been modified very slightly to better suit the needs of the project, but are still useful learning tools
+should anyone want to use them. Read both their headers and implementation to understand their inner workings.
 
-Locate blocks if they exist
-### Static Function Depth analyzer
-Create control tree for non recursive function calls
-
-Find maximum function call depth
-## Other Suggested Tests
-
-### Access management
-Are non-publicly needed variables/functions private
-
-Are there functions that need protection 
-### Function Parameter Complexity
-Are functions readable and understandable without great explanation
-### Rule of Big 3 Verification for dynamic memory
-Assignment operator existence
-
-Copy constructor existence
-
-Constructor/destructor
-### Cyclomatic Complexity
-
-All are subject to change
-
-## Implementation
-We did a thing
-
-## Areas of Research
-Below are some of the resources that have been looked into for inclusion. If a new resource is found, please leave a link below and include a brief description.
-### Elsa Parser
-http://scottmcpeak.com/elkhound/sources/elsa/
-
-A parser used to create AST’s from a code base
-
-Very dependent on other codes for building
-### CLang
-http://clang.llvm.org/docs/IntroductionToTheClangAST.html
-
-Clang (a general C++ compiler, often used in OSX)
-
-Has a very simple and understandable AST structure that could be useful
-
-Would require building a CLang back end and may prove not worth effort
-### Boost-Spirit
-http://boost-spirit.com/home/
-
-A parser built for customization of user where all rules can be defined by the programmer, would allow for high specification and detailed searching
-### g++
-http://www.codesynthesis.com/~boris/blog/2010/05/03/parsing-cxx-with-gcc-plugin-part-1/
-
-The GNU compiler, potentially useful for AST creation with help from plugins
-
-Not much documentation on this usage, output files are unreadable to humans
+Additionally, should anyone want to create a new metric for use with this tool, they should look into the existing ones and 
+the base class they they all inherit from. One of our main concerns was scalability, and we accomplished this by making all 
+tests unique objects to be iterated over to form a complete score taking all tests into account.
